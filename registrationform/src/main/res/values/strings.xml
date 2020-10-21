@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">RegistrationForm</string>
+    <string name="name">Name</string>
+    <string name="roll_number">Roll Number</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="male">Male</string>
+    <string name="female">FeMale</string>
+    <string name="telugu">Telugu</string>
+    <string name="hindi">Hindi</string>
+    <string name="english">English</string>
+    <string name="select_languages">Select Languages</string>
+    <string name="register">Register</string>
+
+    <string-array name="branch_array">
+        <item>Select Branch</item>
+        <item>Computers</item>
+        <item>Science</item>
+        <item>Arts</item>
+    </string-array>
+
+    <string-array name="years">
+        <item>Select Year</item>
+        <item>2015</item>
+        <item>2016</item>
+        <item>2017</item>
+        <item>2018</item>
+        <item>2019</item>
+        <item>2020</item>
+    </string-array>
+</resources>
