@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         final ActivityMainBinding binding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
         final List<String> languages = new ArrayList<>();
-        final SharedPreferences preferences = getSharedPreferences("com.example.registrationform", MODE_MULTI_PROCESS);
+        final SharedPreferences preferences = getSharedPreferences(Fields.PREFS_KEY, MODE_PRIVATE);
         binding.male.setChecked(true);
 
         ArrayAdapter<CharSequence> branchData = ArrayAdapter.createFromResource(

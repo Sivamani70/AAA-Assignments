@@ -14,6 +14,7 @@ public interface Fields {
     String BRANCH = "BRANCH";
     String YEAR = "YEAR";
     String LANGUAGES = "LANGUAGES";
+    String PREFS_KEY = "com.example.registrationform";
 
     default void message(View view) {
         Snackbar.make(view, "Data Saved", Snackbar.LENGTH_LONG).show();

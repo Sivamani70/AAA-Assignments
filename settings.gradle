@@ -1,3 +1,4 @@
+include ':firebaseauth'
 include ':registrationform'
 include ':app'
 rootProject.name = "Assignmnets"
