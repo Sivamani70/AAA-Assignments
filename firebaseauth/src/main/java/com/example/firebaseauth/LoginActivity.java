@@ -21,14 +21,12 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             Context formContext = createPackageContext(PREFS_KEY, CONTEXT_IGNORE_SECURITY);
-            preferences = formContext.getSharedPreferences(PREFS_KEY, MODE_PRIVATE);
+            preferences = formContext.getSharedPreferences(PREFS_KEY, Context.MODE_MULTI_PROCESS);
             Log.e(TAG, "onCreate: Name :\t" + preferences.getString("NAME", ""));
-
-
+            Log.e(TAG, "onCreate: RollNumber :\t" + preferences.getString("ROLL_NUMBER", ""));
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             Log.e(TAG, "onCreate: Error while Accessing" + e.getMessage());
         }
-
     }
 }
