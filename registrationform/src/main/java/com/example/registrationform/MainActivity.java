@@ -1,5 +1,6 @@
 package com.example.registrationform;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,21 +8,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.registrationform.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Fields {
     private static final String TAG = "MainActivity";
     String branch, year;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -33,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         final List<String> languages = new ArrayList<>();
         final SharedPreferences preferences = getSharedPreferences(Fields.PREFS_KEY, MODE_MULTI_PROCESS);
         binding.male.setChecked(true);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Registering user....");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         ArrayAdapter<CharSequence> branchData = ArrayAdapter.createFromResource(
                 MainActivity.this,
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (binding.english.isChecked()) languages.add("English");
             if (binding.hindi.isChecked()) languages.add("Hindi");
 
-            final boolean allFilled = !name.isEmpty() && !rollNumber.isEmpty() && !eMail.isEmpty() && !phoneNumber.isEmpty() && !password.isEmpty();
+            final boolean allFilled = !name.isEmpty() && !rollNumber.isEmpty() && !eMail.isEmpty() && eMail.contains("@") && !phoneNumber.isEmpty() && !password.isEmpty();
 
             if (!(allFilled)) {
                 Snackbar.make(v, "Fill All the details", Snackbar.LENGTH_SHORT).show();
@@ -87,27 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
 
-            Log.w(TAG, "onCreate: " + Fields.NAME + " : " + name);
-            Log.w(TAG, "onCreate: " + Fields.ROLL_NUMBER + " : " + rollNumber);
-            Log.w(TAG, "onCreate: " + Fields.MAIL + " : " + eMail);
-            Log.w(TAG, "onCreate: " + Fields.PHONE_NUMBER + " : " + phoneNumber);
-            Log.w(TAG, "onCreate: " + Fields.PASSWORD + " : " + password);
-            Log.w(TAG, "onCreate: " + Fields.BRANCH + " : " + branch);
-            Log.w(TAG, "onCreate: " + Fields.YEAR + " : " + year);
-            Log.w(TAG, "onCreate: " + Fields.GENDER + " : " + gender);
-
-            String builder = "Name : " + name + "\n" +
-                    "Roll Number : " + rollNumber + "\n" +
-                    "Gender : " + gender + "\n" +
-                    "Mail : " + eMail + "\n" +
-                    "Phone Number : " + phoneNumber + "\n" +
-                    "Password : " + password + "\n" +
-                    "Branch : " + branch + "\n" +
-                    "Year of Pass : " + year + "\n" +
-                    "Languages : " + languages.toString();
-            Toast.makeText(MainActivity.this, builder, Toast.LENGTH_SHORT).show();
-
-            SharedPreferences.Editor editor = preferences.edit();
+            final SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Fields.NAME, name);
             editor.putString(Fields.ROLL_NUMBER, rollNumber);
             editor.putString(Fields.MAIL, eMail);
@@ -117,15 +107,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             editor.putString(Fields.BRANCH, branch);
             editor.putString(Fields.YEAR, year);
             editor.putString(Fields.LANGUAGES, languages.toString());
-
             editor.apply();
-
-
             clearFields(binding);
             message(v);
 
-        });
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Register with Firebase")
+                    .setCancelable(false)
+                    .setMessage("Would you like to register with Firebase with E-mail & Password")
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("yes", (dialog, which) -> {
+                        progressDialog.show();
+                        final FirebaseAuth auth = FirebaseAuth.getInstance();
 
+                        auth.createUserWithEmailAndPassword(eMail, password)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Snackbar.make(v, "User Registration Successful", Snackbar.LENGTH_SHORT).show();
+                                        uploadData(preferences);
+                                    } else {
+                                        Snackbar.make(v, "User Registration Failed", Snackbar.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                    })
+                    .show();
+
+        });
     }
 
 
@@ -159,6 +167,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.telugu.setChecked(false);
         binding.english.setChecked(false);
         binding.hindi.setChecked(false);
+    }
+
+    void uploadData(SharedPreferences prefs) {
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference("userData");
+        Map<String, Object> data = new HashMap<>();
+
+        String[] keys = prefs.getString(MAIL, "").split("@");
+        final String userName = keys[0];
+
+
+        data.put(Fields.USERNAME, userName);
+        data.put(Fields.NAME, prefs.getString(NAME, ""));
+        data.put(Fields.ROLL_NUMBER, prefs.getString(ROLL_NUMBER, ""));
+        data.put(Fields.MAIL, prefs.getString(MAIL, ""));
+        data.put(Fields.PHONE_NUMBER, prefs.getString(PHONE_NUMBER, ""));
+        data.put(Fields.PASSWORD, prefs.getString(PASSWORD, ""));
+        data.put(Fields.BRANCH, prefs.getString(BRANCH, ""));
+        data.put(Fields.GENDER, prefs.getString(GENDER, ""));
+        data.put(Fields.YEAR, prefs.getString(YEAR, ""));
+        data.put(Fields.LANGUAGES, prefs.getString(LANGUAGES, ""));
+
+        database.child(userName).setValue(data)
+                .addOnSuccessListener(aVoid -> Log.w(TAG, "uploadData: Success"))
+                .addOnFailureListener(Throwable::printStackTrace);
+        progressDialog.dismiss();
     }
 
 

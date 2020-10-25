@@ -1,8 +1,4 @@
-package com.example.registrationform;
-
-import android.view.View;
-
-import com.google.android.material.snackbar.Snackbar;
+package com.example.firebaseauth;
 
 public interface Fields {
     String NAME = "NAME";
@@ -14,12 +10,7 @@ public interface Fields {
     String BRANCH = "BRANCH";
     String YEAR = "YEAR";
     String LANGUAGES = "LANGUAGES";
-    String PREFS_KEY = "com.example.registrationform";
+    String APP_NAME = "com.example.registrationform";
     String USERNAME = "USERNAME";
-
-    default void message(View view) {
-        Snackbar.make(view, "Data Saved", Snackbar.LENGTH_LONG).show();
-    }
-
-
 }
+
