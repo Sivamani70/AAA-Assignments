@@ -3,28 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomeScreen">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_gravity="center">
 
-
-        <TextView
-            android:id="@+id/data"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textSize="18sp" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/logout" />
-    </LinearLayout>
+
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </layout>

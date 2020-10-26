@@ -5,4 +5,14 @@
     <string name="login">Login</string>
     <string name="register">New User Register Here</string>
     <string name="logout">Logout</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_mobile_number">Enter Mobile Number</string>
+    <string name="enter_year_of_pass_yyyy">Enter Year of Pass YYYY</string>
+    <string name="enter_branch">Enter Branch</string>
+    <string name="update">UpDate</string>
+    <string name="enter_roll_number">Enter Roll Number</string>
+    <string name="enter_user_name">Enter User Name</string>
+    <string name="enter_e_mail">Enter E mail</string>
+    <string name="edit">Edit</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
